@@ -43,3 +43,12 @@ _ReSharper*/
 
 # Ignore Nuget packages folder
 packages/
+
+# Others
+*.html
+*.js
+*.md
+*.wasm
+
+
+
