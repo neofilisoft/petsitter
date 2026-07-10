@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Petsitter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans:wght@400;600;700;800&family=Noto+Sans+Thai:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --shell: #F2E9DC;
+  --shell-dark: #E3D5C0;
+  --shell-shadow: #C9B79C;
+  --screen-bg: #D7E8D4;
+  --screen-bg-dim: #C6DBC2;
+  --ink: #2B2620;
+  --ink-soft: #5B5347;
+  --coral: #E8734A;
+  --coral-dark: #C85A34;
+  --teal: #4A9B8E;
+  --teal-dark: #397D72;
+  --alert: #D64550;
+  --alert-dark: #B23440;
+  --gold: #E0A937;
+  --paper: #FFFCF6;
+  --font-display: 'Press Start 2P', monospace;
+  --font-body: 'Noto Sans', 'Noto Sans Thai', sans-serif;
+}
+*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+html,body{margin:0;padding:0;}
+body{
+  font-family: var(--font-body);
+  background:
+    radial-gradient(circle at 20% 10%, #F7EFE2 0%, transparent 45%),
+    radial-gradient(circle at 85% 90%, #EFE1CC 0%, transparent 50%),
+    linear-gradient(160deg, #EFE6D6 0%, #E4D6BE 100%);
+  min-height:100vh;
+  color: var(--ink);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding: 24px 14px 60px;
+  overflow-x:hidden;
+}
+body[lang="th"], body.lang-th { font-family: 'Noto Sans Thai', 'Noto Sans', sans-serif; }
+
+/* ---------- top bar ---------- */
+.topbar{
+  width:100%; max-width:460px;
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:18px;
+}
+.brand{ display:flex; align-items:center; gap:10px; }
+.brand-mark{
+  width:34px;height:34px; border-radius:10px;
+  background: linear-gradient(135deg, var(--coral), var(--gold));
+  display:flex;align-items:center;justify-content:center;
+  box-shadow: 0 3px 0 var(--coral-dark);
+  font-size:16px;
+}
+.brand-name{ font-weight:800; font-size:19px; letter-spacing:0.3px; }
+.lang-switch{
+  display:flex; background: var(--shell-dark); border-radius:999px; padding:3px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.12);
+}
+.lang-btn{
+  border:none; background:transparent; padding:6px 14px; border-radius:999px;
+  font-family: var(--font-body); font-weight:700; font-size:12.5px; cursor:pointer;
+  color: var(--ink-soft); transition: all .15s ease;
+}
+.lang-btn.active{ background: var(--paper); color: var(--ink); box-shadow: 0 2px 4px rgba(0,0,0,0.15); }
+
+/* ---------- device shell ---------- */
+.device{
+  width:100%; max-width:420px;
+  background: linear-gradient(160deg, var(--shell) 0%, var(--shell-dark) 100%);
+  border-radius: 42px;
+  padding: 22px 20px 26px;
+  box-shadow:
+    0 2px 0 rgba(255,255,255,0.6) inset,
+    0 -6px 14px rgba(201,183,156,0.5) inset,
+    0 18px 0 var(--shell-shadow),
+    0 26px 34px rgba(90,70,40,0.28);
+  position:relative;
+}
+.device::before{
+  content:"";
+  position:absolute; top:12px; left:50%; transform:translateX(-50%);
+  width:64px; height:6px; border-radius:4px; background: rgba(255,255,255,0.55);
+}
+.device-header{
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:12px; padding: 0 4px;
+}
+.pet-title{ display:flex; flex-direction:column; }
+.pet-name-row{ display:flex; align-items:center; gap:6px; }
+.pet-name{ font-weight:800; font-size:17px; }
+.rename-btn{ background:none;border:none;cursor:pointer;opacity:0.55; font-size:13px; padding:2px 4px;}
+.rename-btn:hover{opacity:1;}
+.pet-stage{ font-size:11.5px; color: var(--ink-soft); font-weight:600; margin-top:1px;}
+.header-icons{ display:flex; gap:8px; }
+.icon-btn{
+  width:34px;height:34px;border-radius:12px; border:none; cursor:pointer;
+  background: var(--paper); box-shadow: 0 2px 0 rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8);
+  font-size:15px; display:flex;align-items:center;justify-content:center;
+  transition: transform .1s;
+}
+.icon-btn:active{ transform: translateY(2px); box-shadow:none; }
+
+/* screen */
+.screen-frame{
+  background: linear-gradient(145deg,#3a352c,#211d17);
+  border-radius: 26px; padding: 10px;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.15);
+}
+.screen{
+  position:relative;
+  background: radial-gradient(ellipse at 30% 15%, var(--screen-bg) 0%, var(--screen-bg-dim) 100%);
+  border-radius: 18px;
+  min-height: 300px;
+  overflow:hidden;
+  box-shadow: inset 0 0 0 3px rgba(0,0,0,0.08), inset 0 4px 18px rgba(0,0,0,0.14);
+}
+.screen::after{
+  content:"";
+  position:absolute; inset:0; pointer-events:none;
+  background: repeating-linear-gradient(180deg, rgba(0,0,0,0.035) 0px, rgba(0,0,0,0.035) 1px, transparent 1px, transparent 3px);
+  mix-blend-mode: multiply;
+}
+.screen-top-row{
+  display:flex; justify-content:space-between; align-items:flex-start;
+  padding: 10px 12px 0; position:relative; z-index:2;
+}
+.age-badge{
+  font-family: var(--font-display); font-size: 8px; color: var(--ink);
+  background: rgba(255,255,255,0.45); padding:4px 6px; border-radius:6px;
+  letter-spacing:0.5px;
+}
+.coin-badge{
+  font-family: var(--font-display); font-size:8px; color: var(--ink);
+  background: rgba(255,255,255,0.45); padding:4px 6px; border-radius:6px;
+  display:flex; align-items:center; gap:4px;
+}
+.pet-stage-view{
+  position:relative; height: 168px;
+  display:flex; align-items:center; justify-content:center;
+  z-index:2;
+}
+.pet-shadow{
+  position:absolute; bottom: 14px; left:50%; transform: translateX(-50%);
+  width: 78px; height:14px; background: rgba(43,38,32,0.18); border-radius:50%;
+  filter: blur(1px);
+}
+.pet-svg-wrap{ width:150px; height:150px; }
+.pet-svg-wrap svg{ width:100%; height:100%; overflow:visible; }
+.speech-bubble{
+  position:absolute; top: -2px; left:50%; transform: translateX(-50%);
+  background: var(--paper); border: 2px solid var(--ink); border-radius: 10px;
+  padding: 4px 9px; font-size: 11px; font-weight:700; white-space:nowrap;
+  opacity:0; transition: opacity .2s, transform .2s; pointer-events:none;
+}
+.speech-bubble.show{ opacity:1; }
+.speech-bubble::after{
+  content:""; position:absolute; bottom:-7px; left:50%; transform:translateX(-50%);
+  border-left:6px solid transparent; border-right:6px solid transparent; border-top:7px solid var(--ink);
+}
+.speech-bubble::before{
+  content:""; position:absolute; bottom:-4.4px; left:50%; transform:translateX(-50%);
+  border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid var(--paper);
+  z-index:1;
+}
+.fx-layer{ position:absolute; inset:0; pointer-events:none; z-index:3; }
+.floater{
+  position:absolute; font-size: 20px; opacity:1; animation: floatUp 1.1s ease-out forwards;
+}
+@keyframes floatUp{
+  0%{ transform: translateY(0) scale(0.6); opacity:0; }
+  15%{ opacity:1; transform: translateY(-6px) scale(1.05); }
+  100%{ transform: translateY(-58px) scale(1); opacity:0; }
+}
+
+/* stat bars area on screen */
+.stats-panel{
+  position:relative; z-index:2; padding: 4px 14px 12px;
+}
+.stat-row{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.stat-icon{ font-size:13px; width:16px; text-align:center; }
+.stat-track{
+  flex:1; height:9px; background: rgba(43,38,32,0.14); border-radius:5px; overflow:hidden;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+}
+.stat-fill{ height:100%; border-radius:5px; transition: width .4s ease; }
+.fill-hunger{ background: linear-gradient(90deg,#E8734A,#F0966E); }
+.fill-happy{ background: linear-gradient(90deg,#E0A937,#EFC761); }
+.fill-energy{ background: linear-gradient(90deg,#4A9B8E,#6FBBAE); }
+.fill-clean{ background: linear-gradient(90deg,#6C9FD6,#93BDE8); }
+.fill-health{ background: linear-gradient(90deg,#C25A82,#DD86A6); }
+.stat-track.critical .stat-fill{ animation: pulseCritical 1s infinite; }
+@keyframes pulseCritical{ 0%,100%{ filter:brightness(1);} 50%{ filter:brightness(1.35);} }
+
+.status-strip{
+  position:relative; z-index:2; padding: 0 14px 10px;
+  display:flex; gap:6px; flex-wrap:wrap; min-height: 22px;
+}
+.status-chip{
+  font-size:10.5px; font-weight:700; padding: 3px 8px; border-radius:999px;
+  background: rgba(255,255,255,0.55); color: var(--ink);
+}
+.status-chip.warn{ background: var(--alert); color: white; }
+.status-chip.good{ background: var(--teal); color: white; }
+
+/* action buttons */
+.controls{
+  margin-top: 16px;
+  display:grid; grid-template-columns: repeat(4,1fr); gap:9px;
+}
+.ctrl-btn{
+  border:none; border-radius:16px; cursor:pointer;
+  background: var(--paper);
+  box-shadow: 0 4px 0 var(--shell-shadow), inset 0 1px 0 rgba(255,255,255,0.9);
+  padding: 10px 4px 8px;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  font-family: var(--font-body); font-weight:700; font-size:10.5px; color: var(--ink);
+  transition: transform .08s;
+}
+.ctrl-btn .ci{ font-size:19px; }
+.ctrl-btn:active{ transform: translateY(3px); box-shadow: 0 1px 0 var(--shell-shadow); }
+.ctrl-btn:disabled{ opacity:0.4; cursor:not-allowed; }
+.ctrl-btn.primary{ background: var(--coral); color:white; box-shadow: 0 4px 0 var(--coral-dark); }
+.ctrl-btn.primary:active{ box-shadow: 0 1px 0 var(--coral-dark); }
+
+.mini-controls{
+  margin-top:9px; display:grid; grid-template-columns: repeat(3,1fr); gap:9px;
+}
+
+/* ---------- modals ---------- */
+.modal-backdrop{
+  position:fixed; inset:0; background: rgba(43,38,32,0.55); backdrop-filter: blur(2px);
+  display:flex; align-items:center; justify-content:center; z-index:50; padding:18px;
+  opacity:0; pointer-events:none; transition: opacity .2s;
+}
+.modal-backdrop.show{ opacity:1; pointer-events:auto; }
+.modal{
+  background: var(--paper); border-radius: 24px; padding: 22px 20px;
+  max-width: 420px; width:100%; max-height:86vh; overflow-y:auto;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  transform: translateY(14px) scale(0.98); transition: transform .2s;
+}
+.modal-backdrop.show .modal{ transform: translateY(0) scale(1); }
+.modal h2{ margin:0 0 4px; font-size:19px; font-weight:800; }
+.modal .sub{ color:var(--ink-soft); font-size:13px; margin-bottom:16px; }
+.modal-close{
+  float:right; background:var(--shell-dark); border:none; width:30px;height:30px;
+  border-radius:10px; cursor:pointer; font-size:14px;
+}
+
+/* species picker */
+.species-grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:12px; margin-top:6px; }
+.species-card{
+  border: 2.5px solid transparent; background: var(--shell); border-radius:18px;
+  padding: 14px 10px 12px; text-align:center; cursor:pointer;
+  transition: border-color .15s, transform .1s;
+}
+.species-card:hover{ border-color: var(--gold); }
+.species-card:active{ transform: scale(0.97); }
+.species-card .sicon{ width:64px;height:64px; margin:0 auto 6px; }
+.species-card .sname{ font-weight:800; font-size:13px; }
+.species-card .sdesc{ font-size:10.5px; color: var(--ink-soft); margin-top:2px; line-height:1.4;}
+
+.name-input-row{ margin-top:14px; }
+.name-input-row label{ font-size:12px; font-weight:700; color: var(--ink-soft); display:block; margin-bottom:6px; }
+.name-input-row input{
+  width:100%; padding: 11px 14px; border-radius:14px; border: 2px solid var(--shell-dark);
+  font-family: var(--font-body); font-size:15px; background: var(--shell);
+}
+.name-input-row input:focus{ outline:none; border-color: var(--coral); }
+.big-btn{
+  width:100%; margin-top:16px; padding: 13px; border:none; border-radius:16px;
+  background: var(--coral); color:white; font-family:var(--font-body); font-weight:800; font-size:14.5px;
+  cursor:pointer; box-shadow: 0 4px 0 var(--coral-dark);
+}
+.big-btn:active{ transform: translateY(3px); box-shadow:none; }
+.big-btn:disabled{ opacity:0.5; cursor:not-allowed; }
+.big-btn.secondary{ background: var(--teal); box-shadow: 0 4px 0 var(--teal-dark); }
+
+/* minigame */
+.game-area{ min-height: 220px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; }
+.tap-target{
+  width:90px;height:90px; border-radius:50%; background: var(--gold); border:none; cursor:pointer;
+  font-size:34px; box-shadow: 0 6px 0 #B8841F; transition: transform .06s;
+}
+.tap-target:active{ transform: scale(0.9) translateY(4px); box-shadow: 0 2px 0 #B8841F; }
+.game-score{ font-family: var(--font-display); font-size:16px; }
+.game-timer{ font-size:12px; color: var(--ink-soft); font-weight:700; }
+
+/* inventory */
+.inv-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:8px; }
+.inv-item{
+  background: var(--shell); border-radius:16px; padding:12px 8px; text-align:center; cursor:pointer;
+  border: none; transition: transform .1s;
+}
+.inv-item:active{ transform: scale(0.95); }
+.inv-item:disabled{ opacity:0.35; cursor:not-allowed; }
+.inv-item .ii{ font-size:26px; }
+.inv-item .iname{ font-size:11px; font-weight:700; margin-top:4px; }
+.inv-item .icount{ font-size:10px; color: var(--ink-soft); margin-top:1px;}
+
+/* history / graveyard */
+.pet-log{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:8px; }
+.pet-log li{
+  background: var(--shell); border-radius:14px; padding:10px 12px;
+  display:flex; align-items:center; gap:10px; font-size:12.5px;
+}
+.pet-log .plicon{ font-size:20px; }
+.pet-log .plname{ font-weight:800; }
+.pet-log .pldetail{ color: var(--ink-soft); font-size:11px; }
+
+/* footer */
+.footer-note{
+  margin-top: 22px; font-size:11.5px; color: var(--ink-soft); text-align:center; max-width:380px; line-height:1.6;
+}
+.setting-row{
+  display:flex; align-items:center; justify-content:space-between; padding: 12px 2px;
+  border-bottom: 1px solid var(--shell-dark);
+}
+.setting-row:last-child{ border-bottom:none; }
+.setting-label{ font-size:13.5px; font-weight:700; }
+.setting-sub{ font-size:11px; color: var(--ink-soft); margin-top:2px; }
+.toggle{
+  width:44px;height:26px;border-radius:999px; background: var(--shell-dark); position:relative; cursor:pointer; border:none;
+  transition: background .2s;
+}
+.toggle.on{ background: var(--teal); }
+.toggle .knob{
+  position:absolute; top:3px; left:3px; width:20px;height:20px; border-radius:50%; background:white;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: left .2s;
+}
+.toggle.on .knob{ left:21px; }
+
+.danger-btn{
+  width:100%; padding:11px; border-radius:14px; border:2px solid var(--alert); background:transparent;
+  color: var(--alert); font-weight:800; font-size:13px; cursor:pointer; margin-top:6px;
+}
+.danger-btn:active{ background: var(--alert); color:white; }
+
+@media (max-width:380px){
+  .device{ padding: 18px 14px 20px; }
+  .pet-svg-wrap{ width:130px; height:130px; }
+}
+[data-i18n]{ }
+.hidden{ display:none !important; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🐾</div>
+    <div class="brand-name">Petsitter</div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="th">ไทย</button>
+  </div>
+</div>
+
+<div class="device">
+  <div class="device-header">
+    <div class="pet-title">
+      <div class="pet-name-row">
+        <span class="pet-name" id="petNameDisplay">—</span>
+        <button class="rename-btn" id="renameBtn" title="Rename">✏️</button>
+      </div>
+      <span class="pet-stage" id="petStageLabel" data-i18n="stage_egg">Egg</span>
+    </div>
+    <div class="header-icons">
+      <button class="icon-btn" id="bagBtn" title="Inventory">🎒</button>
+      <button class="icon-btn" id="statsBtn" title="Log">📋</button>
+      <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+    </div>
+  </div>
+
+  <div class="screen-frame">
+    <div class="screen">
+      <div class="screen-top-row">
+        <div class="age-badge" id="ageBadge">DAY 1</div>
+        <div class="coin-badge">🪙 <span id="coinCount">0</span></div>
+      </div>
+      <div class="pet-stage-view">
+        <div class="pet-shadow"></div>
+        <div class="speech-bubble" id="speechBubble"></div>
+        <div class="pet-svg-wrap" id="petSvgWrap"></div>
+        <div class="fx-layer" id="fxLayer"></div>
+      </div>
+      <div class="stats-panel">
+        <div class="stat-row">
+          <span class="stat-icon">🍖</span>
+          <div class="stat-track" id="track-hunger"><div class="stat-fill fill-hunger" id="fill-hunger" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">😊</span>
+          <div class="stat-track" id="track-happy"><div class="stat-fill fill-happy" id="fill-happy" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">⚡</span>
+          <div class="stat-track" id="track-energy"><div class="stat-fill fill-energy" id="fill-energy" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">🧼</span>
+          <div class="stat-track" id="track-clean"><div class="stat-fill fill-clean" id="fill-clean" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">❤️</span>
+          <div class="stat-track" id="track-health"><div class="stat-fill fill-health" id="fill-health" style="width:100%"></div></div>
+        </div>
+      </div>
+      <div class="status-strip" id="statusStrip"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn primary" id="feedBtn"><span class="ci">🍖</span><span data-i18n="btn_feed">Feed</span></button>
+    <button class="ctrl-btn" id="playBtn"><span class="ci">🎮</span><span data-i18n="btn_play">Play</span></button>
+    <button class="ctrl-btn" id="cleanBtn"><span class="ci">🧼</span><span data-i18n="btn_clean">Clean</span></button>
+    <button class="ctrl-btn" id="sleepBtn"><span class="ci">😴</span><span data-i18n="btn_sleep">Sleep</span></button>
+  </div>
+  <div class="mini-controls">
+    <button class="ctrl-btn" id="healBtn"><span class="ci">💊</span><span data-i18n="btn_heal">Heal</span></button>
+    <button class="ctrl-btn" id="petBtn"><span class="ci">🖐️</span><span data-i18n="btn_pet">Pet</span></button>
+    <button class="ctrl-btn" id="workBtn"><span class="ci">💰</span><span data-i18n="btn_earn">Earn</span></button>
+  </div>
+</div>
+
+<div class="footer-note" id="footerNote">
+  Petsitter runs entirely in your browser. Your pet's progress is saved automatically on this device.
+</div>
+
+<!-- SPECIES PICKER MODAL -->
+<div class="modal-backdrop show" id="pickerBackdrop">
+  <div class="modal">
+    <h2 data-i18n="picker_title">Choose your companion</h2>
+    <div class="sub" data-i18n="picker_sub">Every species has its own personality and needs. Choose wisely — you'll be their sitter.</div>
+    <div class="species-grid" id="speciesGrid"></div>
+    <div class="name-input-row">
+      <label data-i18n="name_label">Name your pet</label>
+      <input type="text" id="petNameInput" maxlength="14" placeholder="...">
+    </div>
+    <button class="big-btn" id="startBtn" disabled data-i18n="btn_start">Start caring</button>
+  </div>
+</div>
+
+<!-- INVENTORY MODAL -->
+<div class="modal-backdrop" id="bagBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="bagClose">✕</button>
+    <h2 data-i18n="bag_title">Bag</h2>
+    <div class="sub" data-i18n="bag_sub">Items you've earned from work and minigames.</div>
+    <div class="inv-grid" id="invGrid"></div>
+  </div>
+</div>
+
+<!-- MINIGAME MODAL -->
+<div class="modal-backdrop" id="gameBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="gameClose">✕</button>
+    <h2 data-i18n="game_title">Tap Along!</h2>
+    <div class="sub" data-i18n="game_sub">Tap the star as many times as you can in 8 seconds.</div>
+    <div class="game-area">
+      <div class="game-score">⭐ <span id="gameScore">0</span></div>
+      <button class="tap-target" id="tapTarget">⭐</button>
+      <div class="game-timer" id="gameTimer">8.0s</div>
+    </div>
+  </div>
+</div>
+
+<!-- LOG MODAL -->
+<div class="modal-backdrop" id="logBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="logClose">✕</button>
+    <h2 data-i18n="log_title">Care Log</h2>
+    <div class="sub" data-i18n="log_sub">A record of pets you've raised.</div>
+    <ul class="pet-log" id="petLog"></ul>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="settingsClose">✕</button>
+    <h2 data-i18n="settings_title">Settings</h2>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label" data-i18n="settings_sound">Sound effects</div>
+        <div class="setting-sub" data-i18n="settings_sound_sub">Chimes for feeding, play, and alerts</div>
+      </div>
+      <button class="toggle on" id="soundToggle"><div class="knob"></div></button>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label" data-i18n="settings_notif">Reduced motion</div>
+        <div class="setting-sub" data-i18n="settings_notif_sub">Calmer animations for the pet</div>
+      </div>
+      <button class="toggle" id="motionToggle"><div class="knob"></div></button>
+    </div>
+    <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:6px;">
+      <div class="setting-label" data-i18n="settings_reset">Reset game</div>
+      <div class="setting-sub" data-i18n="settings_reset_sub">Erases your current pet and starts over. This cannot be undone.</div>
+      <button class="danger-btn" id="resetBtn" data-i18n="btn_reset">Release &amp; restart</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   PETSITTER — self-contained digital pet game
+   ========================================================= */
+
+const I18N = {
+en: {
+  stage_egg:"Egg", stage_baby:"Baby", stage_child:"Child", stage_teen:"Teen", stage_adult:"Adult", stage_elder:"Elder",
+  btn_feed:"Feed", btn_play:"Play", btn_clean:"Clean", btn_sleep:"Sleep", btn_heal:"Heal", btn_pet:"Pet", btn_earn:"Earn",
+  btn_start:"Start caring", btn_reset:"Release & restart",
+  picker_title:"Choose your companion", picker_sub:"Every species has its own personality and needs. Choose wisely — you'll be their sitter.",
+  name_label:"Name your pet",
+  bag_title:"Bag", bag_sub:"Items you've earned from work and minigames.",
+  game_title:"Tap Along!", game_sub:"Tap the star as many times as you can in 8 seconds.",
+  log_title:"Care Log", log_sub:"A record of pets you've raised.",
+  settings_title:"Settings",
+  settings_sound:"Sound effects", settings_sound_sub:"Chimes for feeding, play, and alerts",
+  settings_notif:"Reduced motion", settings_notif_sub:"Calmer animations for the pet",
+  settings_reset:"Reset game", settings_reset_sub:"Erases your current pet and starts over. This cannot be undone.",
+  footer:"Petsitter runs entirely in your browser. Your pet's progress is saved automatically on this device.",
+  empty_bag:"No items yet — tap Earn to work a shift, or play the minigame for treats.",
+  empty_log:"No pets in your log yet. Once a pet grows old or is released, they'll appear here.",
+  wake_confirm:"Wake up",
+  sleeping:"Sleeping...",
+  sleep_toast:"Tucking in for a nap 💤",
+  wake_toast:"Rise and shine!",
+  hungry:"Hungry", tired:"Tired", dirty:"Dirty", sad:"Unhappy", sick:"Sick", asleep:"Asleep", thriving:"Thriving",
+  confirm_reset:"Release your pet and start a new game? This can't be undone.",
+  name_placeholder:"e.g. Mochi",
+  toast_evolve: (name,stage)=>`${name} evolved into a ${stage}!`,
+  toast_died: (name)=>`${name} has passed on. Thank you for caring for them.`,
+  work_result: (n)=>`You earned ${n} coins!`,
+  need_food:"Feed your pet first!",
+  too_full:"Not hungry right now.",
+  no_energy:"Too tired to play right now.",
+  already_clean:"Already squeaky clean!",
+  already_asleep:"Already asleep.",
+  cant_work_asleep:"Can't work while asleep.",
+  cant_play_asleep:"Wake your pet up first.",
+  full_health:"Feeling perfectly healthy!",
+  no_meds:"No medicine in your bag. Earn coins to buy some, or win it from minigames.",
+  select_species_first:"Pick a species to continue",
+  item_apple:"Apple", item_treat:"Treat", item_medicine:"Medicine", item_toy:"Toy",
+  species_cat_desc:"Independent, aloof, loves naps",
+  species_dog_desc:"Loyal, energetic, always hungry",
+  species_dragon_desc:"Proud, powerful, slow to trust",
+  species_bird_desc:"Chatty, bright, needs stimulation",
+  species_snake_desc:"Calm, quiet, low-maintenance",
+  species_hamster_desc:"Tiny, busy, snack-obsessed",
+  species_glider_desc:"Playful, social, night owl",
+},
+th: {
+  stage_egg:"ไข่", stage_baby:"ทารก", stage_child:"เด็ก", stage_teen:"วัยรุ่น", stage_adult:"โตเต็มวัย", stage_elder:"สูงวัย",
+  btn_feed:"ให้อาหาร", btn_play:"เล่น", btn_clean:"อาบน้ำ", btn_sleep:"นอน", btn_heal:"รักษา", btn_pet:"ลูบ", btn_earn:"หาเงิน",
+  btn_start:"เริ่มเลี้ยงดู", btn_reset:"ปล่อยและเริ่มใหม่",
+  picker_title:"เลือกเพื่อนคู่ใจของคุณ", picker_sub:"แต่ละสายพันธุ์มีนิสัยและความต้องการต่างกัน เลือกให้ดี เพราะคุณจะเป็นผู้ดูแลมัน",
+  name_label:"ตั้งชื่อสัตว์เลี้ยงของคุณ",
+  bag_title:"กระเป๋าสัมภาระ", bag_sub:"ไอเทมที่คุณได้รับจากการทำงานและมินิเกม",
+  game_title:"แตะตามจังหวะ!", game_sub:"แตะดาวให้ได้มากที่สุดภายใน 8 วินาที",
+  log_title:"บันทึกการดูแล", log_sub:"ประวัติสัตว์เลี้ยงที่คุณเคยเลี้ยงดู",
+  settings_title:"การตั้งค่า",
+  settings_sound:"เสียงเอฟเฟกต์", settings_sound_sub:"เสียงกริ่งเมื่อให้อาหาร เล่น และแจ้งเตือน",
+  settings_notif:"ลดการเคลื่อนไหว", settings_notif_sub:"แอนิเมชันที่นุ่มนวลขึ้นสำหรับสัตว์เลี้ยง",
+  settings_reset:"รีเซ็ตเกม", settings_reset_sub:"ลบสัตว์เลี้ยงปัจจุบันและเริ่มใหม่ทั้งหมด การกระทำนี้ย้อนกลับไม่ได้",
+  footer:"Petsitter ทำงานอยู่ในเบราว์เซอร์ของคุณทั้งหมด ความคืบหน้าของสัตว์เลี้ยงจะถูกบันทึกอัตโนมัติบนอุปกรณ์นี้",
+  empty_bag:"ยังไม่มีไอเทม — แตะ 'หาเงิน' เพื่อทำงาน หรือเล่นมินิเกมเพื่อรับของรางวัล",
+  empty_log:"ยังไม่มีสัตว์เลี้ยงในบันทึก เมื่อสัตว์เลี้ยงแก่ตัวหรือถูกปล่อย พวกเขาจะปรากฏที่นี่",
+  wake_confirm:"ปลุก",
+  sleeping:"กำลังหลับ...",
+  sleep_toast:"งีบหลับสักหน่อย 💤",
+  wake_toast:"ตื่นแล้ว สดชื่นจัง!",
+  hungry:"หิว", tired:"เหนื่อย", dirty:"สกปรก", sad:"ไม่มีความสุข", sick:"ป่วย", asleep:"หลับอยู่", thriving:"แข็งแรงดี",
+  confirm_reset:"ปล่อยสัตว์เลี้ยงและเริ่มเกมใหม่หรือไม่? การกระทำนี้ย้อนกลับไม่ได้",
+  name_placeholder:"เช่น โมจิ",
+  toast_evolve: (name,stage)=>`${name} เติบโตเป็น${stage}แล้ว!`,
+  toast_died: (name)=>`${name} ได้จากไปแล้ว ขอบคุณที่ดูแลกันมา`,
+  work_result: (n)=>`คุณได้รับ ${n} เหรียญ!`,
+  need_food:"ให้อาหารสัตว์เลี้ยงก่อน!",
+  too_full:"ตอนนี้ยังไม่หิว",
+  no_energy:"เหนื่อยเกินกว่าจะเล่นตอนนี้",
+  already_clean:"สะอาดอยู่แล้ว!",
+  already_asleep:"หลับอยู่แล้ว",
+  cant_work_asleep:"ทำงานตอนหลับไม่ได้",
+  cant_play_asleep:"ปลุกสัตว์เลี้ยงก่อนนะ",
+  full_health:"รู้สึกแข็งแรงดีมาก!",
+  no_meds:"ไม่มียาในกระเป๋า หาเหรียญเพื่อซื้อ หรือชนะจากมินิเกม",
+  select_species_first:"เลือกสายพันธุ์เพื่อดำเนินการต่อ",
+  item_apple:"แอปเปิ้ล", item_treat:"ขนม", item_medicine:"ยา", item_toy:"ของเล่น",
+  species_cat_desc:"เป็นตัวของตัวเอง เย็นชา ชอบงีบหลับ",
+  species_dog_desc:"ซื่อสัตย์ ร่าเริง หิวตลอดเวลา",
+  species_dragon_desc:"ทรนง ทรงพลัง ไว้ใจยาก",
+  species_bird_desc:"ช่างพูด สดใส ต้องการสิ่งกระตุ้น",
+  species_snake_desc:"สงบนิ่ง เงียบขรึม ดูแลง่าย",
+  species_hamster_desc:"ตัวจิ๋ว ขยันขันแข็ง คลั่งไคล้ขนม",
+  species_glider_desc:"ขี้เล่น ชอบสังคม หากินกลางคืน",
+}
+};
+let LANG = localStorage.getItem('petsitter_lang') || 'en';
+function t(key, ...args){
+  const v = (I18N[LANG] && I18N[LANG][key]) ?? I18N.en[key];
+  return typeof v === 'function' ? v(...args) : v;
+}
+function applyI18n(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k = el.getAttribute('data-i18n');
+    if(I18N[LANG][k]) el.textContent = I18N[LANG][k];
+  });
+  document.body.classList.toggle('lang-th', LANG === 'th');
+  document.getElementById('petNameInput').placeholder = t('name_placeholder');
+  document.getElementById('footerNote').textContent = t('footer');
+  document.querySelectorAll('.lang-btn').forEach(b=> b.classList.toggle('active', b.dataset.lang===LANG));
+  renderSpeciesGrid();
+  renderStageLabel();
+  renderStatus();
+  renderInventory();
+  renderLog();
+}
+
+/* ---------- SPECIES DEFINITIONS ---------- */
+const SPECIES = {
+  cat:      { icon:'🐱', color:'#E8A855', descKey:'species_cat_desc', decay:{hunger:1.0, happy:0.9, energy:1.1, clean:0.8}, name:{en:'Cat', th:'แมว'} },
+  dog:      { icon:'🐶', color:'#C9975A', descKey:'species_dog_desc', decay:{hunger:1.3, happy:1.2, energy:1.3, clean:1.1}, name:{en:'Dog', th:'สุนัข'} },
+  dragon:   { icon:'🐉', color:'#5A9E6F', descKey:'species_dragon_desc', decay:{hunger:1.1, happy:0.7, energy:0.9, clean:0.6}, name:{en:'Dragon', th:'มังกร'} },
+  bird:     { icon:'🐦', color:'#5FA8C9', descKey:'species_bird_desc', decay:{hunger:0.9, happy:1.4, energy:1.0, clean:0.9}, name:{en:'Bird', th:'นก'} },
+  snake:    { icon:'🐍', color:'#7FA85A', descKey:'species_snake_desc', decay:{hunger:0.6, happy:0.6, energy:0.7, clean:0.5}, name:{en:'Snake', th:'งู'} },
+  hamster:  { icon:'🐹', color:'#D9A05B', descKey:'species_hamster_desc', decay:{hunger:1.4, happy:1.0, energy:1.2, clean:1.0}, name:{en:'Sugar Glider', th:'ชูก้าไกลเดอร์'} },
+  glider:   { icon:'🐿️', color:'#8C7AA8', descKey:'species_glider_desc', decay:{hunger:1.0, happy:1.3, energy:1.4, clean:0.9}, name:{en:'Sugar Glider', th:'ชูก้าไกลเดอร์'} },
+};
+// Fix labels: hamster is actual Hamster, glider is actual Sugar Glider
+SPECIES.hamster.name = { en:'Hamster', th:'แฮมสเตอร์' };
+SPECIES.glider.name = { en:'Sugar Glider', th:'ชูก้าไกลเดอร์' };
+
+const STAGES = ['egg','baby','child','teen','adult','elder'];
+const STAGE_HOURS = { egg:0.05, baby:6, child:18, teen:36, adult:96, elder:9999 }; // hours of age to reach next
+
+/* ---------- GAME STATE ---------- */
+let state = null;
+const SAVE_KEY = 'petsitter_save_v1';
+const LOG_KEY = 'petsitter_log_v1';
+
+function defaultPetState(species, name){
+  const now = Date.now();
+  return {
+    species, name,
+    bornAt: now,
+    lastTick: now,
+    stage: 'egg',
+    hunger: 100, happy: 100, energy: 100, clean: 100, health: 100,
+    asleep: false,
+    coins: 20,
+    inventory: { apple: 2, treat: 1, medicine: 1, toy: 0 },
+    alive: true,
+  };
+}
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(SAVE_KEY);
+    if(raw) state = JSON.parse(raw);
+  }catch(e){ state = null; }
+}
+function saveState(){
+  if(state) localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+}
+function loadLog(){
+  try{ return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); }catch(e){ return []; }
+}
+function pushLog(entry){
+  const log = loadLog();
+  log.unshift(entry);
+  localStorage.setItem(LOG_KEY, JSON.stringify(log.slice(0,30)));
+}
+
+/* ---------- TICK / SIMULATION ---------- */
+function ageHours(){
+  return (Date.now() - state.bornAt) / 3600000;
+}
+function currentStageIndex(){
+  const h = ageHours();
+  let cum = 0, idx = 0;
+  for(let i=0;i<STAGES.length;i++){
+    cum += STAGE_HOURS[STAGES[i]];
+    if(h < cum){ idx = i; break; }
+    idx = i;
+  }
+  return idx;
+}
+function applyDecay(totalElapsedHours){
+  if(!state || !state.alive) return;
+  // Simulate in bounded sub-steps so health penalties (which depend on
+  // other stats crossing thresholds) only apply for the portion of time
+  // actually spent in that bad state, instead of retroactively applying
+  // across the entire catch-up window.
+  const STEP = 0.5;
+  let remaining = totalElapsedHours;
+  const d = SPECIES[state.species].decay;
+
+  while(remaining > 0 && state.alive){
+    const dt = Math.min(STEP, remaining);
+    remaining -= dt;
+
+    const sleepMul = state.asleep ? 0.25 : 1;
+    const energyRegen = state.asleep ? 14 : 0;
+
+    state.hunger = clamp(state.hunger - dt * 1.6 * d.hunger * sleepMul, 0, 100);
+    state.happy  = clamp(state.happy  - dt * 1.2 * d.happy * sleepMul, 0, 100);
+    state.clean  = clamp(state.clean  - dt * 1.0 * d.clean * sleepMul, 0, 100);
+    if(state.asleep){
+      state.energy = clamp(state.energy + dt * energyRegen, 0, 100);
+    } else {
+      state.energy = clamp(state.energy - dt * 1.4 * d.energy, 0, 100);
+    }
+
+    let healthDelta = 0;
+    if(state.hunger < 20) healthDelta -= dt * 2;
+    if(state.clean < 20) healthDelta -= dt * 1;
+    if(state.energy < 15) healthDelta -= dt * 1;
+    if(state.hunger > 60 && state.clean > 60 && state.energy > 40) healthDelta += dt * 1.2;
+    state.health = clamp(state.health + healthDelta, 0, 100);
+
+    if(state.health <= 0){
+      state.alive = false;
+      break;
+    }
+  }
+}
+function clamp(v,min,max){ return Math.max(min, Math.min(max, v)); }
+
+function tick(){
+  if(!state) return;
+  const now = Date.now();
+  const elapsedH = (now - state.lastTick) / 3600000;
+  if(state.alive){
+    applyDecay(Math.min(elapsedH, 48)); // cap catch-up so long-away doesn't insta-kill unfairly hard
+    const idx = currentStageIndex();
+    const newStage = STAGES[idx];
+    if(newStage !== state.stage){
+      state.stage = newStage;
+      showSpeech(t('toast_evolve', state.name, t('stage_'+newStage)));
+    }
+  }
+  state.lastTick = now;
+  saveState();
+
+  if(!state.alive){
+    handleDeath();
+    return;
+  }
+  renderAll();
+}
+
+function handleDeath(){
+  pushLog({
+    name: state.name, species: state.species,
+    diedAt: Date.now(), bornAt: state.bornAt, stage: state.stage,
+    reason: 'health'
+  });
+  showToast(t('toast_died', state.name));
+  localStorage.removeItem(SAVE_KEY);
+  state = null;
+  setTimeout(()=> openPicker(), 1400);
+}
+
+/* ---------- ACTIONS ---------- */
+function requireAlive(){ return state && state.alive; }
+
+function doFeed(){
+  if(!requireAlive() || state.asleep) return;
+  if(state.hunger >= 95){ showSpeech(t('too_full')); return; }
+  const hasApple = state.inventory.apple > 0;
+  if(hasApple){ state.inventory.apple--; }
+  state.hunger = clamp(state.hunger + (hasApple?28:18), 0, 100);
+  state.happy = clamp(state.happy + 4, 0, 100);
+  spawnFx('🍖');
+  playBeep(440);
+  saveState(); renderAll();
+}
+function doPlay(){
+  if(!requireAlive()) return;
+  if(state.asleep){ showSpeech(t('cant_play_asleep')); return; }
+  if(state.energy < 12){ showSpeech(t('no_energy')); return; }
+  openGameModal();
+}
+function doClean(){
+  if(!requireAlive() || state.asleep) return;
+  if(state.clean >= 95){ showSpeech(t('already_clean')); return; }
+  state.clean = clamp(state.clean + 35, 0, 100);
+  state.happy = clamp(state.happy + 2, 0, 100);
+  spawnFx('✨');
+  playBeep(660);
+  saveState(); renderAll();
+}
+function doSleep(){
+  if(!requireAlive()) return;
+  if(state.asleep){
+    state.asleep = false;
+    showSpeech(t('wake_toast'));
+  } else {
+    state.asleep = true;
+    showSpeech(t('sleep_toast'));
+  }
+  saveState(); renderAll();
+}
+function doHeal(){
+  if(!requireAlive() || state.asleep) return;
+  if(state.health >= 95){ showSpeech(t('full_health')); return; }
+  if(state.inventory.medicine <= 0){ showSpeech(t('no_meds')); return; }
+  state.inventory.medicine--;
+  state.health = clamp(state.health + 40, 0, 100);
+  spawnFx('💊');
+  playBeep(520);
+  saveState(); renderAll();
+}
+function doPet(){
+  if(!requireAlive() || state.asleep) return;
+  state.happy = clamp(state.happy + 10, 0, 100);
+  spawnFx('💖');
+  playBeep(740);
+  saveState(); renderAll();
+}
+function doWork(){
+  if(!requireAlive()) return;
+  if(state.asleep){ showSpeech(t('cant_work_asleep')); return; }
+  if(state.energy < 15){ showSpeech(t('no_energy')); return; }
+  const earned = 5 + Math.floor(Math.random()*8);
+  state.coins += earned;
+  state.energy = clamp(state.energy - 15, 0, 100);
+  state.hunger = clamp(state.hunger - 6, 0, 100);
+  showSpeech(t('work_result', earned));
+  spawnFx('🪙');
+  playBeep(880);
+  // small chance of item drop
+  if(Math.random() < 0.35){
+    const drop = ['apple','treat','medicine'][Math.floor(Math.random()*3)];
+    state.inventory[drop] = (state.inventory[drop]||0) + 1;
+  }
+  saveState(); renderAll();
+}
+
+/* ---------- UI: pet sprite (SVG) ---------- */
+function petSvg(species, stage, mood){
+  const c = SPECIES[species].color;
+  const shade = shadeColor(c, -18);
+  const light = shadeColor(c, 24);
+  const eyeState = mood === 'asleep' ? 'closed' : (mood==='sad'?'sad':'open');
+
+  // simple scale by stage
+  const scale = stage==='egg' ? 0.7 : stage==='baby' ? 0.82 : 1;
+
+  if(stage === 'egg'){
+    return `<svg viewBox="0 0 150 150"><g transform="translate(75,80) scale(${scale})">
+      <ellipse cx="0" cy="10" rx="46" ry="58" fill="${c}" stroke="${shade}" stroke-width="4"/>
+      <ellipse cx="-14" cy="-14" rx="14" ry="10" fill="${light}" opacity="0.6"/>
+      <path d="M -18 0 L -4 18 L -20 20 L 2 40" stroke="${shade}" stroke-width="3" fill="none" stroke-linecap="round"/>
+    </g></svg>`;
+  }
+
+  const bodies = {
+    cat: bodyRound, dog: bodyRound, hamster: bodyRound, glider: bodyRound,
+    dragon: bodyDragon, bird: bodyBird, snake: bodySnake
+  };
+  const fn = bodies[species] || bodyRound;
+  return fn(species, stage, c, shade, light, eyeState, scale);
+}
+
+function shadeColor(hex, amt){
+  let col = hex.replace('#','');
+  if(col.length===3) col = col.split('').map(x=>x+x).join('');
+  const num = parseInt(col,16);
+  let r = (num>>16)+amt, g=((num>>8)&0xff)+amt, b=(num&0xff)+amt;
+  r=Math.max(0,Math.min(255,r)); g=Math.max(0,Math.min(255,g)); b=Math.max(0,Math.min(255,b));
+  return '#'+((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1);
+}
+
+function eyesMarkup(state_, cx1, cx2, cy){
+  if(state_==='closed'){
+    return `<path d="M ${cx1-7} ${cy} q 7 6 14 0" stroke="#2B2620" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M ${cx2-7} ${cy} q 7 6 14 0" stroke="#2B2620" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+  }
+  if(state_==='sad'){
+    return `<circle cx="${cx1}" cy="${cy}" r="5.5" fill="#2B2620"/><circle cx="${cx2}" cy="${cy}" r="5.5" fill="#2B2620"/>
+            <path d="M ${cx1-9} ${cy-9} q 9 -6 16 0" stroke="#2B2620" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <path d="M ${cx2-7} ${cy-9} q 9 -6 16 0" stroke="#2B2620" stroke-width="2.5" fill="none" stroke-linecap="round"/>`;
+  }
+  return `<circle cx="${cx1}" cy="${cy}" r="6" fill="#2B2620"/><circle cx="${cx1+2}" cy="${cy-2}" r="1.8" fill="#fff"/>
+          <circle cx="${cx2}" cy="${cy}" r="6" fill="#2B2620"/><circle cx="${cx2+2}" cy="${cy-2}" r="1.8" fill="#fff"/>`;
+}
+
+function bodyRound(species, stage, c, shade, light, eyeState, scale){
+  const earShape = species==='cat'
+    ? `<path d="M -32 -34 L -44 -62 L -14 -42 Z" fill="${c}" stroke="${shade}" stroke-width="3"/>
+       <path d="M 32 -34 L 44 -62 L 14 -42 Z" fill="${c}" stroke="${shade}" stroke-width="3"/>`
+    : species==='dog'
+    ? `<ellipse cx="-38" cy="-20" rx="12" ry="24" fill="${c}" stroke="${shade}" stroke-width="3" transform="rotate(-18 -38 -20)"/>
+       <ellipse cx="38" cy="-20" rx="12" ry="24" fill="${c}" stroke="${shade}" stroke-width="3" transform="rotate(18 38 -20)"/>`
+    : species==='hamster'
+    ? `<circle cx="-34" cy="-40" r="16" fill="${c}" stroke="${shade}" stroke-width="3"/>
+       <circle cx="34" cy="-40" r="16" fill="${c}" stroke="${shade}" stroke-width="3"/>
+       <circle cx="-34" cy="-40" r="8" fill="#F4C9C9"/><circle cx="34" cy="-40" r="8" fill="#F4C9C9"/>`
+    : `<ellipse cx="-30" cy="-42" rx="10" ry="20" fill="${c}" stroke="${shade}" stroke-width="3" transform="rotate(-25 -30 -42)"/>
+       <ellipse cx="30" cy="-42" rx="10" ry="20" fill="${c}" stroke="${shade}" stroke-width="3" transform="rotate(25 30 -42)"/>`;
+
+  const nose = species==='dog'
+    ? `<ellipse cx="0" cy="14" rx="7" ry="5" fill="#3A342B"/>`
+    : species==='cat'
+    ? `<path d="M -5 12 L 5 12 L 0 18 Z" fill="#C9757A"/>`
+    : `<ellipse cx="0" cy="12" rx="4" ry="3" fill="#3A342B"/>`;
+
+  const whiskers = species==='cat' ? `
+    <line x1="-18" y1="16" x2="-42" y2="10" stroke="${shade}" stroke-width="1.5" opacity="0.5"/>
+    <line x1="-18" y1="20" x2="-42" y2="20" stroke="${shade}" stroke-width="1.5" opacity="0.5"/>
+    <line x1="18" y1="16" x2="42" y2="10" stroke="${shade}" stroke-width="1.5" opacity="0.5"/>
+    <line x1="18" y1="20" x2="42" y2="20" stroke="${shade}" stroke-width="1.5" opacity="0.5"/>` : '';
+
+  const tail = species==='dog'
+    ? `<path d="M 40 30 Q 66 20 60 -4" stroke="${c}" stroke-width="10" fill="none" stroke-linecap="round"/>`
+    : species==='cat'
+    ? `<path d="M 38 34 Q 68 40 58 4" stroke="${c}" stroke-width="9" fill="none" stroke-linecap="round"/>`
+    : species==='glider'
+    ? `<path d="M 34 38 Q 30 62 4 66" stroke="${c}" stroke-width="12" fill="none" stroke-linecap="round"/>`
+    : '';
+
+  const gliderMembrane = species==='glider'
+    ? `<path d="M -48 10 Q -70 -6 -46 -30" fill="${light}" stroke="${shade}" stroke-width="2.5" opacity="0.85"/>
+       <path d="M 48 10 Q 70 -6 46 -30" fill="${light}" stroke="${shade}" stroke-width="2.5" opacity="0.85"/>` : '';
+
+  return `<svg viewBox="0 0 150 150"><g transform="translate(75,86) scale(${scale})">
+    ${tail}
+    ${gliderMembrane}
+    ${earShape}
+    <ellipse cx="0" cy="8" rx="46" ry="42" fill="${c}" stroke="${shade}" stroke-width="4"/>
+    <ellipse cx="0" cy="30" rx="30" ry="14" fill="${light}" opacity="0.55"/>
+    ${eyesMarkup(eyeState, -16, 16, -2)}
+    ${nose}
+    ${whiskers}
+    ${species==='hamster' ? `<ellipse cx="-24" cy="18" rx="9" ry="6" fill="${light}"/><ellipse cx="24" cy="18" rx="9" ry="6" fill="${light}"/>`:''}
+  </g></svg>`;
+}
+
+function bodyDragon(species, stage, c, shade, light, eyeState, scale){
+  return `<svg viewBox="0 0 150 150"><g transform="translate(75,86) scale(${scale})">
+    <path d="M 34 34 Q 60 30 54 4" stroke="${c}" stroke-width="11" fill="none" stroke-linecap="round"/>
+    <path d="M 52 4 L 44 -6 M 52 4 L 58 -8" stroke="${shade}" stroke-width="4" fill="none" stroke-linecap="round"/>
+    <ellipse cx="0" cy="10" rx="44" ry="40" fill="${c}" stroke="${shade}" stroke-width="4"/>
+    <path d="M -20 -34 L -12 -52 L -4 -32 Z" fill="${c}" stroke="${shade}" stroke-width="3"/>
+    <path d="M 4 -32 L 12 -54 L 20 -34 Z" fill="${c}" stroke="${shade}" stroke-width="3"/>
+    <path d="M -8 -30 L 0 -44 L 8 -30 Z" fill="${light}" stroke="${shade}" stroke-width="2"/>
+    <ellipse cx="0" cy="30" rx="26" ry="12" fill="${light}" opacity="0.6"/>
+    ${eyesMarkup(eyeState, -15, 15, -4)}
+    <path d="M -8 16 Q 0 22 8 16" stroke="${shade}" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    <path d="M -30 6 L -40 2 M -30 -2 L -40 -8" stroke="${shade}" stroke-width="2" opacity="0.5"/>
+    <path d="M 30 6 L 40 2 M 30 -2 L 40 -8" stroke="${shade}" stroke-width="2" opacity="0.5"/>
+  </g></svg>`;
+}
+
+function bodyBird(species, stage, c, shade, light, eyeState, scale){
+  return `<svg viewBox="0 0 150 150"><g transform="translate(75,90) scale(${scale})">
+    <ellipse cx="18" cy="30" rx="10" ry="18" fill="${shade}" opacity="0.7" transform="rotate(20 18 30)"/>
+    <ellipse cx="-18" cy="30" rx="10" ry="18" fill="${shade}" opacity="0.7" transform="rotate(-20 -18 30)"/>
+    <ellipse cx="0" cy="6" rx="38" ry="42" fill="${c}" stroke="${shade}" stroke-width="4"/>
+    <path d="M -14 -38 Q 0 -52 14 -38" stroke="${c}" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <ellipse cx="0" cy="26" rx="22" ry="20" fill="${light}" opacity="0.6"/>
+    <path d="M -6 8 L 8 12 L -6 16 Z" fill="#E0A937" stroke="${shade}" stroke-width="1.5"/>
+    ${eyesMarkup(eyeState, -12, 8, -8)}
+  </g></svg>`;
+}
+
+function bodySnake(species, stage, c, shade, light, eyeState, scale){
+  return `<svg viewBox="0 0 150 150"><g transform="translate(75,96) scale(${scale})">
+    <path d="M -30 30 Q -40 0 -10 -4 Q 20 -8 10 -30" stroke="${c}" stroke-width="26" fill="none" stroke-linecap="round"/>
+    <path d="M -30 30 Q -40 0 -10 -4 Q 20 -8 10 -30" stroke="${shade}" stroke-width="26" fill="none" stroke-linecap="round" opacity="0.15" stroke-dasharray="2 10"/>
+    <ellipse cx="14" cy="-34" rx="20" ry="18" fill="${c}" stroke="${shade}" stroke-width="4"/>
+    <ellipse cx="14" cy="-24" rx="12" ry="7" fill="${light}" opacity="0.6"/>
+    ${eyesMarkup(eyeState, 6, 24, -38)}
+    <path d="M 30 -30 L 42 -32 L 34 -26 L 44 -22" stroke="#D64550" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g></svg>`;
+}
+
+/* ---------- UI RENDERING ---------- */
+let blinkTimer = null;
+function renderPetSvg(){
+  const wrap = document.getElementById('petSvgWrap');
+  if(!state){ wrap.innerHTML = ''; return; }
+  let mood = 'open';
+  if(state.asleep) mood = 'asleep';
+  else if(state.happy < 30 || state.health < 30) mood = 'sad';
+  wrap.innerHTML = petSvg(state.species, state.stage, mood);
+  wrap.style.animation = state.asleep ? 'none' : 'bob 2.4s ease-in-out infinite';
+}
+// bob animation via inline style tag once
+(function injectBob(){
+  const s = document.createElement('style');
+  s.textContent = `@keyframes bob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}`;
+  document.head.appendChild(s);
+})();
+
+function renderStageLabel(){
+  if(!state){ return; }
+  document.getElementById('petStageLabel').textContent = t('stage_'+state.stage);
+  document.getElementById('petNameDisplay').textContent = state.name;
+  const days = Math.max(1, Math.floor(ageHours()/24)+1);
+  document.getElementById('ageBadge').textContent = (LANG==='th' ? 'วันที่ ' : 'DAY ') + days;
+  document.getElementById('coinCount').textContent = state.coins;
+}
+
+function statusForStat(val, kind){
+  if(val < 25) return kind;
+  return null;
+}
+function renderStats(){
+  if(!state) return;
+  const map = { hunger:'hunger', happy:'happy', energy:'energy', clean:'clean', health:'health' };
+  Object.entries(map).forEach(([k,_])=>{
+    const v = Math.round(state[k]);
+    document.getElementById('fill-'+k).style.width = v+'%';
+    document.getElementById('track-'+k).classList.toggle('critical', v < 20);
+  });
+}
+function renderStatus(){
+  if(!state){ document.getElementById('statusStrip').innerHTML=''; return; }
+  const chips = [];
+  if(state.asleep) chips.push({label:t('asleep'), cls:'good'});
+  if(state.hunger < 25) chips.push({label:t('hungry'), cls:'warn'});
+  if(state.energy < 25 && !state.asleep) chips.push({label:t('tired'), cls:'warn'});
+  if(state.clean < 25) chips.push({label:t('dirty'), cls:'warn'});
+  if(state.happy < 25) chips.push({label:t('sad'), cls:'warn'});
+  if(state.health < 30) chips.push({label:t('sick'), cls:'warn'});
+  if(chips.length===0 && !state.asleep) chips.push({label:t('thriving'), cls:'good'});
+  document.getElementById('statusStrip').innerHTML = chips.map(c=>`<span class="status-chip ${c.cls}">${c.label}</span>`).join('');
+}
+function renderButtons(){
+  const dead = !state || !state.alive;
+  const asleep = state && state.asleep;
+  document.getElementById('feedBtn').disabled = dead || asleep;
+  document.getElementById('playBtn').disabled = dead || asleep;
+  document.getElementById('cleanBtn').disabled = dead || asleep;
+  document.getElementById('healBtn').disabled = dead || asleep;
+  document.getElementById('petBtn').disabled = dead || asleep;
+  document.getElementById('workBtn').disabled = dead || asleep;
+  document.getElementById('sleepBtn').disabled = dead;
+  document.getElementById('sleepBtn').querySelector('span:last-child').textContent = asleep ? t('wake_confirm') : t('btn_sleep');
+  document.getElementById('sleepBtn').querySelector('.ci').textContent = asleep ? '☀️' : '😴';
+}
+function renderInventory(){
+  const grid = document.getElementById('invGrid');
+  if(!state){ grid.innerHTML = `<div class="sub">${t('empty_bag')}</div>`; return; }
+  const items = [
+    { key:'apple', icon:'🍎', label:t('item_apple') },
+    { key:'treat', icon:'🍬', label:t('item_treat') },
+    { key:'medicine', icon:'💊', label:t('item_medicine') },
+    { key:'toy', icon:'🧸', label:t('item_toy') },
+  ];
+  grid.innerHTML = items.map(it=>{
+    const count = state.inventory[it.key]||0;
+    return `<button class="inv-item" data-item="${it.key}" ${count<=0?'disabled':''}>
+      <div class="ii">${it.icon}</div>
+      <div class="iname">${it.label}</div>
+      <div class="icount">×${count}</div>
+    </button>`;
+  }).join('');
+  grid.querySelectorAll('.inv-item').forEach(btn=>{
+    btn.addEventListener('click', ()=> useItem(btn.dataset.item));
+  });
+}
+function useItem(key){
+  if(!requireAlive() || state.asleep) return;
+  if((state.inventory[key]||0) <= 0) return;
+  state.inventory[key]--;
+  if(key==='apple'){ state.hunger = clamp(state.hunger+22,0,100); spawnFx('🍎'); }
+  if(key==='treat'){ state.happy = clamp(state.happy+18,0,100); state.hunger = clamp(state.hunger+8,0,100); spawnFx('🍬'); }
+  if(key==='medicine'){ state.health = clamp(state.health+40,0,100); spawnFx('💊'); }
+  if(key==='toy'){ state.happy = clamp(state.happy+22,0,100); state.energy = clamp(state.energy-6,0,100); spawnFx('🧸'); }
+  playBeep(600);
+  saveState(); renderAll();
+}
+function renderLog(){
+  const log = loadLog();
+  const el = document.getElementById('petLog');
+  if(log.length===0){ el.innerHTML = `<li>${t('empty_log')}</li>`; return; }
+  el.innerHTML = log.map(e=>{
+    const days = Math.max(1, Math.floor((e.diedAt-e.bornAt)/86400000)+1);
+    const speciesName = SPECIES[e.species]?.name[LANG] || e.species;
+    return `<li><span class="plicon">${SPECIES[e.species]?.icon||'🐾'}</span>
+      <div><div class="plname">${e.name}</div>
+      <div class="pldetail">${speciesName} · ${t('stage_'+e.stage)} · ${days}d</div></div></li>`;
+  }).join('');
+}
+
+function renderAll(){
+  renderPetSvg();
+  renderStageLabel();
+  renderStats();
+  renderStatus();
+  renderButtons();
+}
+
+/* ---------- FX / TOASTS ---------- */
+function spawnFx(emoji){
+  const layer = document.getElementById('fxLayer');
+  const el = document.createElement('div');
+  el.className = 'floater';
+  el.textContent = emoji;
+  el.style.left = (55 + Math.random()*40) + 'px';
+  el.style.top = '70px';
+  layer.appendChild(el);
+  setTimeout(()=> el.remove(), 1150);
+}
+let speechTimer = null;
+function showSpeech(msg){
+  const b = document.getElementById('speechBubble');
+  b.textContent = msg;
+  b.classList.add('show');
+  clearTimeout(speechTimer);
+  speechTimer = setTimeout(()=> b.classList.remove('show'), 2200);
+}
+function showToast(msg){
+  showSpeech(msg);
+}
+
+/* ---------- SOUND (simple WebAudio beep, no external files) ---------- */
+let audioCtx = null;
+let soundOn = localStorage.getItem('petsitter_sound') !== 'off';
+function playBeep(freq){
+  if(!soundOn) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = 'square';
+    o.frequency.value = freq;
+    g.gain.value = 0.05;
+    o.connect(g); g.connect(audioCtx.destination);
+    o.start();
+    g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.18);
+    o.stop(audioCtx.currentTime + 0.2);
+  }catch(e){}
+}
+
+/* ---------- SPECIES PICKER ---------- */
+let pickedSpecies = null;
+function renderSpeciesGrid(){
+  const grid = document.getElementById('speciesGrid');
+  grid.innerHTML = Object.entries(SPECIES).map(([key, sp])=>{
+    return `<button class="species-card" data-species="${key}">
+      <div class="sicon">${miniSvg(key, sp.color)}</div>
+      <div class="sname">${sp.name[LANG]}</div>
+      <div class="sdesc">${t(sp.descKey)}</div>
+    </button>`;
+  }).join('');
+  grid.querySelectorAll('.species-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      grid.querySelectorAll('.species-card').forEach(c=>c.style.borderColor='transparent');
+      card.style.borderColor = 'var(--coral)';
+      pickedSpecies = card.dataset.species;
+      updateStartBtn();
+    });
+  });
+}
+function miniSvg(key, color){
+  return petSvg(key, 'child', 'open').replace('<svg viewBox="0 0 150 150">','<svg viewBox="0 0 150 150" style="width:64px;height:64px;">');
+}
+function updateStartBtn(){
+  const nameVal = document.getElementById('petNameInput').value.trim();
+  document.getElementById('startBtn').disabled = !(pickedSpecies && nameVal.length>0);
+}
+document.getElementById('petNameInput').addEventListener('input', updateStartBtn);
+
+function openPicker(){
+  pickedSpecies = null;
+  document.getElementById('petNameInput').value = '';
+  updateStartBtn();
+  renderSpeciesGrid();
+  document.getElementById('pickerBackdrop').classList.add('show');
+}
+function closePicker(){
+  document.getElementById('pickerBackdrop').classList.remove('show');
+}
+document.getElementById('startBtn').addEventListener('click', ()=>{
+  if(!pickedSpecies) return;
+  const name = document.getElementById('petNameInput').value.trim().slice(0,14) || 'Pet';
+  state = defaultPetState(pickedSpecies, name);
+  saveState();
+  closePicker();
+  renderAll();
+  showSpeech(LANG==='th' ? `สวัสดี! ฉันคือ ${name}` : `Hi! I'm ${name}`);
+});
+
+/* ---------- RENAME ---------- */
+document.getElementById('renameBtn').addEventListener('click', ()=>{
+  if(!state) return;
+  const newName = prompt(t('name_label'), state.name);
+  if(newName && newName.trim()){
+    state.name = newName.trim().slice(0,14);
+    saveState();
+    renderStageLabel();
+  }
+});
+
+/* ---------- MODALS: open/close plumbing ---------- */
+function wireModal(openBtnId, backdropId, closeBtnId, onOpen){
+  const backdrop = document.getElementById(backdropId);
+  document.getElementById(openBtnId).addEventListener('click', ()=>{
+    if(onOpen) onOpen();
+    backdrop.classList.add('show');
+  });
+  document.getElementById(closeBtnId).addEventListener('click', ()=> backdrop.classList.remove('show'));
+  backdrop.addEventListener('click', (e)=>{ if(e.target===backdrop) backdrop.classList.remove('show'); });
+}
+wireModal('bagBtn','bagBackdrop','bagClose', renderInventory);
+wireModal('statsBtn','logBackdrop','logClose', renderLog);
+wireModal('settingsBtn','settingsBackdrop','settingsClose', null);
+
+/* ---------- MINIGAME ---------- */
+let gameActive = false, gameScore = 0, gameTimeLeft = 8.0, gameInterval = null;
+function openGameModal(){
+  gameScore = 0; gameTimeLeft = 8.0; gameActive = true;
+  document.getElementById('gameScore').textContent = gameScore;
+  document.getElementById('gameTimer').textContent = gameTimeLeft.toFixed(1)+'s';
+  document.getElementById('gameBackdrop').classList.add('show');
+  clearInterval(gameInterval);
+  gameInterval = setInterval(()=>{
+    gameTimeLeft -= 0.1;
+    if(gameTimeLeft <= 0){
+      gameTimeLeft = 0;
+      clearInterval(gameInterval);
+      endGame();
+    }
+    document.getElementById('gameTimer').textContent = Math.max(0,gameTimeLeft).toFixed(1)+'s';
+  }, 100);
+}
+document.getElementById('tapTarget').addEventListener('click', ()=>{
+  if(!gameActive) return;
+  gameScore++;
+  document.getElementById('gameScore').textContent = gameScore;
+  playBeep(500+gameScore*4);
+  const btn = document.getElementById('tapTarget');
+  const wrap = btn.parentElement;
+  const maxX = 60, maxY = 20;
+  btn.style.marginLeft = (Math.random()*maxX*2-maxX)+'px';
+});
+function endGame(){
+  gameActive = false;
+  if(!requireAlive()) return;
+  const happyGain = clamp(8 + gameScore*2, 0, 60);
+  const energyCost = clamp(10 + Math.floor(gameScore/2), 5, 30);
+  state.happy = clamp(state.happy + happyGain, 0, 100);
+  state.energy = clamp(state.energy - energyCost, 0, 100);
+  if(gameScore >= 15 && Math.random()<0.5){
+    state.inventory.toy = (state.inventory.toy||0)+1;
+  }
+  saveState();
+  setTimeout(()=>{
+    document.getElementById('gameBackdrop').classList.remove('show');
+    renderAll();
+    showSpeech(LANG==='th' ? `สนุกมาก! +${happyGain} ความสุข` : `That was fun! +${happyGain} happy`);
+  }, 500);
+}
+document.getElementById('gameClose').addEventListener('click', ()=>{
+  clearInterval(gameInterval);
+  gameActive = false;
+  document.getElementById('gameBackdrop').classList.remove('show');
+});
+
+/* ---------- SETTINGS ---------- */
+const soundToggle = document.getElementById('soundToggle');
+soundToggle.classList.toggle('on', soundOn);
+soundToggle.addEventListener('click', ()=>{
+  soundOn = !soundOn;
+  localStorage.setItem('petsitter_sound', soundOn?'on':'off');
+  soundToggle.classList.toggle('on', soundOn);
+});
+let reducedMotion = localStorage.getItem('petsitter_motion') === 'on';
+const motionToggle = document.getElementById('motionToggle');
+motionToggle.classList.toggle('on', reducedMotion);
+function applyMotionPref(){
+  document.documentElement.style.setProperty('--motion-scale', reducedMotion?'0':'1');
+  document.querySelectorAll('.pet-svg-wrap').forEach(w=> w.style.animationPlayState = reducedMotion?'paused':'running');
+}
+motionToggle.addEventListener('click', ()=>{
+  reducedMotion = !reducedMotion;
+  localStorage.setItem('petsitter_motion', reducedMotion?'on':'off');
+  motionToggle.classList.toggle('on', reducedMotion);
+  applyMotionPref();
+});
+applyMotionPref();
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  if(confirm(t('confirm_reset'))){
+    if(state){
+      pushLog({ name: state.name, species: state.species, diedAt: Date.now(), bornAt: state.bornAt, stage: state.stage, reason:'released' });
+    }
+    localStorage.removeItem(SAVE_KEY);
+    state = null;
+    document.getElementById('settingsBackdrop').classList.remove('show');
+    openPicker();
+    renderAll();
+  }
+});
+
+/* ---------- LANGUAGE SWITCH ---------- */
+document.querySelectorAll('.lang-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    LANG = btn.dataset.lang;
+    localStorage.setItem('petsitter_lang', LANG);
+    applyI18n();
+  });
+});
+
+/* ---------- MAIN ACTION BUTTON WIRING ---------- */
+document.getElementById('feedBtn').addEventListener('click', doFeed);
+document.getElementById('playBtn').addEventListener('click', doPlay);
+document.getElementById('cleanBtn').addEventListener('click', doClean);
+document.getElementById('sleepBtn').addEventListener('click', doSleep);
+document.getElementById('healBtn').addEventListener('click', doHeal);
+document.getElementById('petBtn').addEventListener('click', doPet);
+document.getElementById('workBtn').addEventListener('click', doWork);
+
+/* ---------- INIT ---------- */
+function init(){
+  loadState();
+  applyI18n();
+  if(state){
+    tick();
+    closePicker();
+  } else {
+    openPicker();
+  }
+  renderAll();
+  setInterval(tick, 15000); // tick every 15s while page is open
+  // random idle blink speech occasionally
+  setInterval(()=>{
+    if(state && state.alive && !state.asleep && Math.random()<0.15){
+      const idle = [
+        LANG==='th' ? '...' : '...',
+        state.hunger<40 ? t('hungry') : null,
+      ].filter(Boolean);
+      if(idle.length) showSpeech(idle[0]);
+    }
+  }, 9000);
+}
+init();
+</script>
+</body>
+</html>
