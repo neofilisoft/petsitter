@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Petsitter</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans:wght@400;600;700;800&family=Noto+Sans+Thai:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🐾</div>
+    <div class="brand-name">Petsitter</div>
+  </div>
+  <div class="lang-switch">
+    <button class="lang-btn" data-lang="en">EN</button>
+    <button class="lang-btn" data-lang="th">ไทย</button>
+  </div>
+</div>
+
+<div class="device">
+  <div class="device-header">
+    <div class="pet-title">
+      <div class="pet-name-row">
+        <span class="pet-name" id="petNameDisplay">—</span>
+        <button class="rename-btn" id="renameBtn" title="Rename">✏️</button>
+      </div>
+      <span class="pet-stage" id="petStageLabel" data-i18n="stage_egg">Egg</span>
+    </div>
+    <div class="header-icons">
+      <button class="icon-btn" id="shopBtn" title="Shop">🛒</button>
+      <button class="icon-btn" id="bagBtn" title="Inventory">🎒</button>
+      <button class="icon-btn" id="statsBtn" title="Log">📋</button>
+      <button class="icon-btn" id="settingsBtn" title="Settings">⚙️</button>
+    </div>
+  </div>
+
+  <div class="screen-frame">
+    <div class="screen">
+      <div class="screen-top-row">
+        <div class="age-badge" id="ageBadge">DAY 1</div>
+        <div class="badge-cluster">
+          <div class="signal-badge" id="signalBadge" title="Signal">📶</div>
+          <div class="coin-badge">🪙 <span id="coinCount">0</span></div>
+        </div>
+      </div>
+      <div class="pet-stage-view">
+        <div class="pet-shadow"></div>
+        <div class="speech-bubble" id="speechBubble"></div>
+        <div class="pet-svg-wrap" id="petSvgWrap"></div>
+        <div class="fx-layer" id="fxLayer"></div>
+      </div>
+      <div class="stats-panel">
+        <div class="stat-row">
+          <span class="stat-icon">🍖</span>
+          <div class="stat-track" id="track-hunger"><div class="stat-fill fill-hunger" id="fill-hunger" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">😊</span>
+          <div class="stat-track" id="track-happy"><div class="stat-fill fill-happy" id="fill-happy" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">⚡</span>
+          <div class="stat-track" id="track-energy"><div class="stat-fill fill-energy" id="fill-energy" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">🧼</span>
+          <div class="stat-track" id="track-clean"><div class="stat-fill fill-clean" id="fill-clean" style="width:100%"></div></div>
+        </div>
+        <div class="stat-row">
+          <span class="stat-icon">❤️</span>
+          <div class="stat-track" id="track-health"><div class="stat-fill fill-health" id="fill-health" style="width:100%"></div></div>
+        </div>
+      </div>
+      <div class="status-strip" id="statusStrip"></div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="ctrl-btn primary" id="feedBtn"><span class="ci">🍖</span><span data-i18n="btn_feed">Feed</span></button>
+    <button class="ctrl-btn" id="playBtn"><span class="ci">🎮</span><span data-i18n="btn_play">Play</span></button>
+    <button class="ctrl-btn" id="cleanBtn"><span class="ci">🧼</span><span data-i18n="btn_clean">Clean</span></button>
+    <button class="ctrl-btn" id="sleepBtn"><span class="ci">😴</span><span data-i18n="btn_sleep">Sleep</span></button>
+  </div>
+  <div class="mini-controls mini-controls-5">
+    <button class="ctrl-btn" id="healBtn"><span class="ci">💊</span><span data-i18n="btn_heal">Heal</span></button>
+    <button class="ctrl-btn" id="petBtn"><span class="ci">🖐️</span><span data-i18n="btn_pet">Pet</span></button>
+    <button class="ctrl-btn" id="workBtn"><span class="ci">💰</span><span data-i18n="btn_earn">Earn</span></button>
+    <button class="ctrl-btn" id="signalBtn"><span class="ci">📡</span><span data-i18n="btn_signal">Hunt</span></button>
+    <button class="ctrl-btn" id="breedBtn" disabled><span class="ci">💞</span><span data-i18n="btn_breed">Breed</span></button>
+  </div>
+</div>
+
+<div class="footer-note" id="footerNote">
+  Petsitter runs entirely in your browser. Your pet's progress is saved automatically on this device.
+</div>
+
+<!-- SPECIES PICKER MODAL -->
+<div class="modal-backdrop show" id="pickerBackdrop">
+  <div class="modal">
+    <h2 data-i18n="picker_title">Choose your companion</h2>
+    <div class="sub" data-i18n="picker_sub">Every species has its own personality and needs. Choose wisely — you'll be their sitter.</div>
+    <div class="species-grid" id="speciesGrid"></div>
+    <div class="name-input-row">
+      <label data-i18n="name_label">Name your pet</label>
+      <input type="text" id="petNameInput" maxlength="14" placeholder="...">
+    </div>
+    <button class="big-btn" id="startBtn" disabled data-i18n="btn_start">Start caring</button>
+    <button class="text-link-btn" id="pickerRestoreLink" data-i18n="picker_restore_link">Already have a pet? Restore with Transfer ID</button>
+  </div>
+</div>
+
+<!-- INVENTORY MODAL -->
+<div class="modal-backdrop" id="bagBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="bagClose">✕</button>
+    <h2 data-i18n="bag_title">Bag</h2>
+    <div class="sub" data-i18n="bag_sub">Items you've earned from work and minigames.</div>
+    <div class="inv-grid" id="invGrid"></div>
+  </div>
+</div>
+
+<!-- FEED PICKER MODAL -->
+<div class="modal-backdrop" id="feedPickerBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="feedPickerClose">✕</button>
+    <h2 data-i18n="feed_picker_title">Feed</h2>
+    <div class="sub" data-i18n="feed_picker_sub">Choose something from your bag to feed your pet.</div>
+    <div class="inv-grid" id="feedPickerGrid"></div>
+  </div>
+</div>
+
+<!-- SHOP MODAL -->
+<div class="modal-backdrop" id="shopBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="shopClose">✕</button>
+    <h2 data-i18n="shop_title">Shop</h2>
+    <div class="sub" data-i18n="shop_sub">Spend coins on food, care items, and toys.</div>
+    <div class="shop-grid" id="shopGrid"></div>
+  </div>
+</div>
+
+<!-- ACTIVITIES MENU MODAL -->
+<div class="modal-backdrop" id="activitiesBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="activitiesClose">✕</button>
+    <h2 data-i18n="activities_title">Activities</h2>
+    <div class="sub" data-i18n="activities_sub">Choose something fun to do together.</div>
+    <div class="activities-grid" id="activitiesGrid"></div>
+  </div>
+</div>
+
+<!-- MINIGAME PLAY MODAL (shared shell for all activities) -->
+<div class="modal-backdrop" id="gameBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="gameClose">✕</button>
+    <h2 id="gameTitleText">Tap Along!</h2>
+    <div id="gameBody"></div>
+  </div>
+</div>
+
+<!-- BREEDING DEN MODAL -->
+<div class="modal-backdrop" id="breedBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="breedClose">✕</button>
+    <h2 data-i18n="breed_title">Breeding Den</h2>
+    <div id="breedBody"></div>
+  </div>
+</div>
+
+<!-- LOG MODAL -->
+<div class="modal-backdrop" id="logBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="logClose">✕</button>
+    <h2 data-i18n="log_title">Care Log</h2>
+    <div class="sub" data-i18n="log_sub">A record of pets you've raised.</div>
+    <div id="traitsPanel"></div>
+    <ul class="pet-log" id="petLog"></ul>
+  </div>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-backdrop" id="settingsBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="settingsClose">✕</button>
+    <h2 data-i18n="settings_title">Settings</h2>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label" data-i18n="settings_sound">Sound effects</div>
+        <div class="setting-sub" data-i18n="settings_sound_sub">Chimes for feeding, play, and alerts</div>
+      </div>
+      <button class="toggle on" id="soundToggle"><div class="knob"></div></button>
+    </div>
+    <div class="setting-row">
+      <div>
+        <div class="setting-label" data-i18n="settings_notif">Reduced motion</div>
+        <div class="setting-sub" data-i18n="settings_notif_sub">Calmer animations for the pet</div>
+      </div>
+      <button class="toggle" id="motionToggle"><div class="knob"></div></button>
+    </div>
+    <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:6px;">
+      <div class="setting-label" data-i18n="settings_transfer">Transfer data</div>
+      <div class="setting-sub" data-i18n="settings_transfer_sub">Move your pet to another device, or back it up.</div>
+      <button class="big-btn secondary" id="openTransferBtn" data-i18n="btn_open_transfer">Transfer Data</button>
+    </div>
+    <div class="setting-row" style="flex-direction:column; align-items:stretch; gap:6px;">
+      <div class="setting-label" data-i18n="settings_reset">Reset game</div>
+      <div class="setting-sub" data-i18n="settings_reset_sub">Erases your current pet and starts over. This cannot be undone.</div>
+      <button class="danger-btn" id="resetBtn" data-i18n="btn_reset">Release &amp; restart</button>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSFER DATA MODAL -->
+<div class="modal-backdrop" id="transferBackdrop">
+  <div class="modal">
+    <button class="modal-close" id="transferClose">✕</button>
+    <h2 data-i18n="transfer_title">Transfer Data</h2>
+    <div class="sub" data-i18n="transfer_sub">Move your pet to another device using a Transfer ID and password, like a login code.</div>
+    <div id="transferBody"></div>
+  </div>
+</div>
+
+<script src="js/i18n.js"></script>
+<script src="js/species.js"></script>
+<script src="js/food.js"></script>
+<script src="js/state.js"></script>
+<script src="js/online.js"></script>
+<script src="js/render.js"></script>
+<script src="js/minigames.js"></script>
+<script src="js/breeding_ui.js"></script>
+<script src="js/transfer.js"></script>
+<script src="js/transfer_ui.js"></script>
+<script src="js/actions.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
